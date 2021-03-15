@@ -1,7 +1,6 @@
 package com.example.h8;
 
 import java.util.ArrayList;
-import android.view.View;
 
 public class BottleDispenser {
     private int bottles;
@@ -9,24 +8,25 @@ public class BottleDispenser {
     // It will be sized correctly later.
     private ArrayList<Bottle> BottleList = new ArrayList<Bottle>();
     private double money;
+    private String receipt = "";
 
     private static BottleDispenser single_instance = null;
 
     private BottleDispenser() {
         bottles = 6;
         money = 0;
-        BottleList.add(new Bottle("Pepsi Max", "Pepsi", 0.3,
-                0.5, 1.8));
-        BottleList.add(new Bottle("Pepsi Max", "Pepsi", 0.3,
-                1.5, 2.2));
-        BottleList.add(new Bottle("Coca-Cola Zero", "Coca-Cola", 0.3,
-                0.5, 2.0));
-        BottleList.add(new Bottle("Coca-Cola Zero", "Coca-Cola", 0.3,
-                1.5, 2.5));
-        BottleList.add(new Bottle("Fanta Zero", "Fanta", 0.3,
-                0.5, 1.95));
-        BottleList.add(new Bottle("Fanta Zero", "Fanta", 0.3,
-                0.5, 1.95));
+        BottleList.add(new Bottle("Pepsi", "Pepsi", 0.3,
+                0.5, 1.5));
+        BottleList.add(new Bottle("Pepsi", "Pepsi", 0.3,
+                1.5, 2.0));
+        BottleList.add(new Bottle("Coca-Cola", "Coca-Cola", 0.3,
+                0.5, 1.5));
+        BottleList.add(new Bottle("Coca-Cola", "Coca-Cola", 0.3,
+                1.5, 2.0));
+        BottleList.add(new Bottle("Fanta", "Fanta", 0.3,
+                0.5, 1.5));
+        BottleList.add(new Bottle("Fanta", "Fanta", 0.3,
+                1.5, 2.0));
     }
 
     public static BottleDispenser getInstance() {
@@ -36,57 +36,69 @@ public class BottleDispenser {
         return single_instance;
     }
 
-    /* BottleDispenser() {
-        bottles = 6;
-        money = 0;
-        BottleList.add(new Bottle("Pepsi Max", "Pepsi", 0.3,
-                0.5, 1.8));
-        BottleList.add(new Bottle("Pepsi Max", "Pepsi", 0.3,
-                1.5, 2.2));
-        BottleList.add(new Bottle("Coca-Cola Zero", "Coca-Cola", 0.3,
-                0.5, 2.0));
-        BottleList.add(new Bottle("Coca-Cola Zero", "Coca-Cola", 0.3,
-                1.5, 2.5));
-        BottleList.add(new Bottle("Fanta Zero", "Fanta", 0.3,
-                0.5, 1.95));
-        BottleList.add(new Bottle("Fanta Zero", "Fanta", 0.3,
-                0.5, 1.95));
-    }*/
-
-    public void addMoney(View v) {
-        money += 1;
-        System.out.println("Klink! Added more money!");
+    public void addMoney(int value) {
+        money += value;
     }
 
-    public void buyBottle(int bottle_id) {
-        bottle_id -= 1;
-        if (money > BottleList.get(bottle_id).getPrice()) {
-            if (bottles > 0) {
-                bottles -= 1;
-                money -= BottleList.get(bottle_id).getPrice();
-                System.out.println("KACHUNK! "+ BottleList.get(bottle_id).getName() + " came out of the dispenser!");
-                BottleList.remove(bottle_id);
-            } else {
-                System.out.println("The machine is out of bottles!");
+    public String buyBottle(String bottleName) {
+        boolean bottleFound = false;
+        String returnMessage = "";
+        String[] bottleStuff = bottleName.split(" ");
+        String bottleManufacturer = bottleStuff[0];
+        double bottleSize = Double.parseDouble(bottleStuff[1]);
+        for(Bottle object: BottleList){
+            if ((object.getManufacturer().equals(bottleManufacturer))){
+                if ((object.getSize() == bottleSize)){
+                    if (money >= object.getPrice()) {
+                        BottleList.remove(object);
+                        money -= object.getPrice();
+                        bottles -= 1;
+                        returnMessage = "KACHUNK! " + bottleManufacturer + " " +
+                                bottleSize + " came out of the dispenser!";
+                        bottleFound = true;
+                        receipt = "RECEIPT\nLast bought item:\n" +
+                                bottleManufacturer + " Size: " + bottleSize + " Price: " +
+                                object.getPrice();
+                        break;
+                    }
+                }
             }
-        } else {
-            System.out.println("Add money first!");
         }
+        if (bottleFound == false){
+            returnMessage = "Bottle not found, or insufficient funds.";
+        }
+        return returnMessage;
     }
 
-    public void listContents() {
+    public String listContents() {
         int counter = 1;
+        String bottles = "";
         for(Bottle object: BottleList) {
-            System.out.println(counter+". Name: "+object.getName());
+            /*System.out.println(counter+". Name: "+object.getName());
             System.out.println("\tSize: " + object.getSize()
-                    + "\tPrice: " + object.getPrice());
+                    + "\tPrice: " + object.getPrice());*/
+            bottles = bottles.concat(Integer.toString(counter) +  ". " + object.getName());
+            bottles = bottles.concat(" Size: "+Double.toString(object.getSize()));
+            bottles = bottles.concat(" Price: "+Double.toString(object.getPrice())+ "\n");
             counter++;
+            System.out.println(bottles);
         }
+        return bottles;
     }
 
-    public void returnMoney() {
-        System.out.print("Klink klink. Money came out! ");
-        System.out.printf("You got %.2f€ back\n", money);
+    public String returnMoney() {
+
+        String returnMessage = "Klink klink. Money came out! " +
+                "You got " + money + " € back.";
         money = 0;
+        return returnMessage;
+    }
+
+    public double getMoney(){
+        return money;
+    }
+
+    public String getReceipt(){
+        return receipt;
     }
 }

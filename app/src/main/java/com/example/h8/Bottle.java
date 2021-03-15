@@ -9,7 +9,7 @@ public class Bottle {
     private double price;
 
     public Bottle(){
-        name = "Pepsi Max";
+        name = "Pepsi";
         manufacturer = "Pepsi";
         total_energy = 0.3;
         size = 0.5;
@@ -22,10 +22,20 @@ public class Bottle {
         size = siz;
         price = pri;
     }
-    public String getName(){		return name;			}
-    public String getManufacturer(){return manufacturer; 	}
-    public double getEnergy(){ 		return total_energy; 	}
-    public double getSize(){ 		return size; 			}
-    public double getPrice(){	 	return price; 			}
+    public String getName(){
+        return name;
+    }
+    public String getManufacturer(){
+        return manufacturer;
+    }
+    public double getEnergy(){
+        return total_energy;
+    }
+    public double getSize(){
+        return size;
+    }
+    public double getPrice(){
+        return price;
+    }
 
 }
